@@ -36,7 +36,17 @@ const map = {
                         }
                     },
                 }).addTo(map.lMap);
+                map.updateTrainLocations();
             });
+        });
+    },
+
+    updateTrainLocations: () => {
+        $.get({
+            url: '/api/train-locations/',
+            success: (data) => {
+                console.log(data);
+            },
         });
     },
 
