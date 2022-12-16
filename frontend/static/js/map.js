@@ -1,6 +1,7 @@
 const map = {
     init: (mapId) => {
         map.mapId = mapId;
+        map.zeroTime = Math.floor(new Date() / 1000);
 
         map.sizeToWindow();
         let resizeTimer;
@@ -36,16 +37,34 @@ const map = {
                         }
                     },
                 }).addTo(map.lMap);
-                map.updateTrainLocations();
+                $('#time-slider').on('change', map.timeSliderChange);
+                map.timeSliderChange();
             });
         });
     },
 
-    updateTrainLocations: () => {
+    updateTrainLocations: (timestamp) => {
         $.get({
-            url: '/api/train-locations/',
+            url: `/api/train-locations/${timestamp}`,
             success: (data) => {
-                console.log(data);
+                const icons = $.map(data.trains, (train) => {
+                    const location = [
+                        train.prev_stop.lat - (train.next_stop.lat - train.prev_stop.lat) * train.pct,
+                        train.prev_stop.lon - (train.next_stop.lon - train.prev_stop.lon) * train.pct,
+                    ];
+                    return L.marker(location).bindPopup(train.rt_trip_id);
+                });
+                if (data.trains.length === 1) {
+                    icons.push(L.marker([data.trains[0].prev_stop.lat, data.trains[0].prev_stop.lon], {
+                        icon: L.divIcon({html: 'AYYY'})
+                    }));
+                }
+                const newTrainLayer = L.layerGroup(icons);
+                if (map.trainLayer) {
+                    map.trainLayer.removeFrom(map.lMap);
+                }
+                newTrainLayer.addTo(map.lMap);
+                map.trainLayer = newTrainLayer;
             },
         });
     },
@@ -53,6 +72,12 @@ const map = {
     sizeToWindow: () => {
         $(`#${map.mapId}`).height(window.innerHeight);
     },
+
+    timeSliderChange: () => {
+        const minOffset = $('#time-slider').val();
+        const timestamp = map.zeroTime + minOffset * 10;
+        map.updateTrainLocations(timestamp);
+    }
 };
 
 // Initialize the map on document ready.

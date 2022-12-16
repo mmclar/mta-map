@@ -1,1 +1,4 @@
 #map { height: 180px; }
+
+#info { position:absolute; bottom:20px; z-index:401; left:20px; border:solid 1px black; background-color:#eeeeee; height:150px; right:20px; }
+#time-slider { right:10px; position:absolute; left:10px; width:-moz-available; }

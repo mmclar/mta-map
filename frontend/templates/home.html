@@ -10,9 +10,14 @@
         <script src="{% static '/lib/jquery/jquery-3.5.1.min.js' %}" type="application/javascript"></script>
         <script src="{% static '/lib/leaflet/leaflet.js' %}" type="application/javascript"></script>
         <script src="{% static '/js/map.js' %}" type="application/javascript"></script>
+        <script src="{% static '/js/geo.js' %}" type="application/javascript"></script>
         <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
     </head>
     <body>
         <div id="map"></div>
+        <div id="info">
+            <h1>Time</h1>
+            <input type="range" min="-120" max="120" value="0" id="time-slider">
+        </div>
     </body>
 </html>
